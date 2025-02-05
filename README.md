@@ -6,6 +6,25 @@
 
 This guide walks you through building a web application that scans single-page documents using **DDS**, with **pre-defined configurations**.
 
+**Table of Contents**
+- [License](#license)
+  - [Get a Trial License](#get-a-trial-license)
+  - [Get a Full License](#get-a-full-license)
+- [Quick Start](#quick-start)
+  - [Option 1: Build from Source](#option-1-build-from-source)
+  - [Option 2: Use Precompiled Script](#option-2-use-precompiled-script)
+- [Hello World Sample Explained](#hello-world-sample-explained)
+  - [Reference DDS](#reference-dds)
+  - [Instantiate DDS](#instantiate-dds)
+  - [Launch DDS](#launch-dds)
+  - [Display the Result](#display-the-result)
+- [Custom Usage](#custom-usage)
+  - [DocumentScannerConfig Overview](#documentscannerconfig-overview)
+  - [Workflow Customization](#workflow-customization)
+  - [View-Based Customization](#view-based-customization)
+  - [Self-Hosting Resource Files](#self-hosting-resource-files)
+- [Next Step](#next-step)
+
 ## License
 
 ### Get a Trial License
