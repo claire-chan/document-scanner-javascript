@@ -10,12 +10,13 @@ import { MultiFrameResultCrossFilter } from "dynamsoft-utility";
 import { SharedResources } from "../DocumentScanner";
 import {
   DEFAULT_TEMPLATE_NAMES,
-  DocumentScanResult,
+  DocumentResult,
   EnumFlowType,
   EnumResultStatus,
   UtilizedTemplateNames,
 } from "./utils/types";
 import { DEFAULT_LOADING_SCREEN_STYLE, showLoadingScreen } from "./utils/LoadingScreen";
+import { createStyle } from "./utils";
 
 export interface DocumentScannerViewConfig {
   templateFilePath?: string;
@@ -64,7 +65,7 @@ export default class DocumentScannerView {
   };
 
   // Scan Resolve
-  private currentScanResolver?: (result: DocumentScanResult) => void;
+  private currentScanResolver?: (result: DocumentResult) => void;
 
   private loadingScreen: ReturnType<typeof showLoadingScreen> | null = null;
 
@@ -99,9 +100,7 @@ export default class DocumentScannerView {
     }
 
     // Create loading screen style
-    const styleSheet = document.createElement("style");
-    styleSheet.textContent = DEFAULT_LOADING_SCREEN_STYLE;
-    document.head.appendChild(styleSheet);
+    createStyle("dds-loading-screen-style", DEFAULT_LOADING_SCREEN_STYLE);
 
     try {
       const { cameraView, cameraEnhancer, cvRouter } = this.resources;
@@ -130,6 +129,7 @@ export default class DocumentScannerView {
         newSettings.capturedResultItemTypes |= EnumCapturedResultItemType.CRIT_ORIGINAL_IMAGE;
         await cvRouter.updateSettings(this.config.utilizedTemplateNames.detect, newSettings);
       }
+      cvRouter.maxImageSideLength = Infinity;
 
       const resultReceiver = new CapturedResultReceiver();
       resultReceiver.onCapturedResultReceived = (result) => this.handleBoundsDetection(result);
@@ -653,7 +653,7 @@ export default class DocumentScannerView {
       // Hide loading screen
       this.hideScannerLoadingOverlay(true);
 
-      const result: DocumentScanResult = {
+      const result: DocumentResult = {
         status: {
           code: EnumResultStatus.RS_SUCCESS,
           message: "Success",
@@ -727,7 +727,7 @@ export default class DocumentScannerView {
     }
   }
 
-  async launch(): Promise<DocumentScanResult> {
+  async launch(): Promise<DocumentResult> {
     try {
       await this.initialize();
 

@@ -1,7 +1,7 @@
 import DocumentScanner from "./DocumentScanner";
 import DocumentNormalizerView from "./views/DocumentCorrectionView";
 import DocumentScannerView from "./views/DocumentScannerView";
-import ScanResultView from "./views/ScanResultView";
+import DocumentResultView from "./views/DocumentResultView";
 import { EnumResultStatus } from "./views/utils/types";
 import {
   PlayCallbackInfo,
@@ -15,23 +15,26 @@ export const DDS = {
   DocumentScanner,
   DocumentNormalizerView,
   DocumentScannerView,
-  ScanResultView,
+  DocumentResultView,
   EnumResultStatus,
 };
 
 export type { NormalizedImageResultItem, PlayCallbackInfo, Point, Rect, VideoDeviceInfo };
 export type { DocumentScannerConfig, SharedResources } from "./DocumentScanner";
 export type { DocumentScannerViewConfig } from "./views/DocumentScannerView";
-export type { DocumentCorrectionViewConfig, DocumentCorrectionViewControlIcons } from "./views/DocumentCorrectionView";
-export type { ScanResultViewConfig, ScanResultViewControlIcons } from "./views/ScanResultView";
 export type {
-  DocumentScanResult,
+  DocumentCorrectionViewConfig,
+  DocumentCorrectionViewToolbarButtonsConfig,
+} from "./views/DocumentCorrectionView";
+export type { DocumentResultViewConfig, DocumentResultViewToolbarButtonsConfig } from "./views/DocumentResultView";
+export type {
+  DocumentResult,
   UtilizedTemplateNames,
   ResultStatus,
-  ControlButton,
+  ToolbarButtonConfig,
   EnumFlowType,
 } from "./views/utils/types";
 
-export { DocumentScanner, DocumentNormalizerView, DocumentScannerView, ScanResultView, EnumResultStatus };
+export { DocumentScanner, DocumentNormalizerView, DocumentScannerView, DocumentResultView, EnumResultStatus };
 
 export default DDS;

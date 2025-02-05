@@ -30,7 +30,7 @@ export type ResultStatus = {
   message?: string;
 };
 
-export interface DocumentScanResult {
+export interface DocumentResult {
   status: ResultStatus;
   correctedImageResult?: NormalizedImageResultItem | DSImageData;
   originalImageResult?: OriginalImageResultItem["imageData"];
@@ -38,9 +38,14 @@ export interface DocumentScanResult {
   _flowType?: EnumFlowType;
 }
 
-export interface ControlButton {
+export type ToolbarButtonConfig = Pick<ToolbarButton, "icon" | "label" | "className" | "isHidden">;
+
+export interface ToolbarButton {
+  id: string;
   icon: string;
-  text: string;
+  label: string;
   onClick?: () => void | Promise<void>;
-  disabled?: boolean;
+  className?: string;
+  isDisabled?: boolean;
+  isHidden?: boolean;
 }
