@@ -7,23 +7,40 @@
 This guide walks you through building a web application that scans single-page documents using **DDS**, with **pre-defined configurations**.
 
 **Table of Contents**
-- [License](#license)
-  - [Get a Trial License](#get-a-trial-license)
-  - [Get a Full License](#get-a-full-license)
-- [Quick Start](#quick-start)
-  - [Option 1: Build from Source](#option-1-build-from-source)
-  - [Option 2: Use Precompiled Script](#option-2-use-precompiled-script)
-- [Hello World Sample Explained](#hello-world-sample-explained)
-  - [Reference DDS](#reference-dds)
-  - [Instantiate DDS](#instantiate-dds)
-  - [Launch DDS](#launch-dds)
-  - [Display the Result](#display-the-result)
-- [Custom Usage](#custom-usage)
-  - [DocumentScannerConfig Overview](#documentscannerconfig-overview)
-  - [Workflow Customization](#workflow-customization)
-  - [View-Based Customization](#view-based-customization)
-  - [Self-Hosting Resource Files](#self-hosting-resource-files)
-- [Next Step](#next-step)
+- [Scan Single-Page Documents with Dynamsoft Document Scanner](#scan-single-page-documents-with-dynamsoft-document-scanner)
+  - [License](#license)
+    - [Get a Trial License](#get-a-trial-license)
+    - [Get a Full License](#get-a-full-license)
+  - [Quick Start](#quick-start)
+    - [Option 1: Build from Source](#option-1-build-from-source)
+    - [Option 2: Use Precompiled Script](#option-2-use-precompiled-script)
+  - [Hello World Sample Explained](#hello-world-sample-explained)
+    - [Reference DDS](#reference-dds)
+    - [Instantiate DDS](#instantiate-dds)
+    - [Launch DDS](#launch-dds)
+    - [Display the Result](#display-the-result)
+  - [Custom Usage](#custom-usage)
+    - [DocumentScannerConfig Overview](#documentscannerconfig-overview)
+    - [Workflow Customization](#workflow-customization)
+      - [Example 1: Specify the Container for DocumentScanner](#example-1-specify-the-container-for-documentscanner)
+      - [Example 2: Specify Only the Container for DocumentScannerView](#example-2-specify-only-the-container-for-documentscannerview)
+      - [Example 3: Specify Individual View Containers](#example-3-specify-individual-view-containers)
+    - [View-Based Customization](#view-based-customization)
+      - [`DocumentScannerView` Configuration](#documentscannerview-configuration)
+        - [Steps to Customize the UI for `DocumentScannerView`](#steps-to-customize-the-ui-for-documentscannerview)
+        - [Styling Buttons](#styling-buttons)
+        - [Customizing Apply Button Callback](#customizing-apply-button-callback)
+      - [`DocumentResultView` Configuration](#documentresultview-configuration)
+        - [Styling Buttons](#styling-buttons-1)
+        - [Customizing the "Done" Button Callback](#customizing-the-done-button-callback)
+        - [Customizing the "Upload" Button](#customizing-the-upload-button)
+    - [Self-Hosting Resource Files](#self-hosting-resource-files)
+      - [Modify the Build Script](#modify-the-build-script)
+      - [Update the Engine Resource Paths](#update-the-engine-resource-paths)
+      - [Update the UI Configuration](#update-the-ui-configuration)
+      - [Build the Project](#build-the-project)
+      - [Serve the Project Locally](#serve-the-project-locally)
+  - [Next Step](#next-step)
 
 ## License
 
@@ -84,7 +101,7 @@ Since the **DDS library files** are published on [**npm**](https://www.npmjs.com
 
 To use the precompiled script, simply include the following URL in a `<script>` tag:
 ```html
-<script src="https://cdn.jsdelivr.net/npm/dynamsoft-document-scanner@1.0.2/dist/dds.bundle.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dynamsoft-document-scanner@1.0.3/dist/dds.bundle.js"></script>
 ```
 
 Below is the complete **Hello World** sample page that uses this precompiled script from a CDN.
@@ -99,7 +116,7 @@ Below is the complete **Hello World** sample page that uses this precompiled scr
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dynamsoft Document Scanner - Hello World</title>
-    <script src="https://cdn.jsdelivr.net/npm/dynamsoft-document-scanner@1.0.2/dist/dds.bundle.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dynamsoft-document-scanner@1.0.3/dist/dds.bundle.js"></script>
   </head>
   <body>
     <h1 style="font-size: large">Dynamsoft Document Scanner</h1>
@@ -152,7 +169,7 @@ Let’s walk through the code in the Hello World Sample to understand how it wor
     <title>Dynamsoft Document Scanner - Hello World</title>
     <script src="../dist/dds.bundle.js"></script>
     <!--Alternatively, reference the script from CDN
-    <script src="https://cdn.jsdelivr.net/npm/dynamsoft-document-scanner@1.0.2/dist/dds.bundle.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dynamsoft-document-scanner@1.0.3/dist/dds.bundle.js"></script>
     -->
   </head>
 ```
@@ -166,7 +183,7 @@ In this step, **DDS** is referenced using a relative local path in the `<head>` 
 Alternatively, the script can be referenced from a CDN:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/dynamsoft-document-scanner@1.0.2/dist/dds.bundle.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dynamsoft-document-scanner@1.0.3/dist/dds.bundle.js"></script>
 ```
 
 **DDS** wraps all its dependency scripts, so a **DDS** project only needs to include **DDS** itself as a single script. No additional dependency scripts are required.
@@ -370,7 +387,7 @@ We previously covered `container` in [Workflow Customization](#workflow-customiz
 > If **DDS** performance does not meet your needs in your usage scenario, you may require a customized algorithm template for better results. In this case, please contact our experienced [Technical Support Team](https://www.dynamsoft.com/company/contact/) to discuss your requirements. They will help tailor a suitable template for you, which you can then apply by updating `templateFilePath`.
 
 By default, `cameraEnhancerUIPath` points to a file hosted on the jsDelivr CDN:  
-[https://cdn.jsdelivr.net/npm/dynamsoft-document-scanner@1.0.2/dist/document-scanner.ui.html](https://cdn.jsdelivr.net/npm/dynamsoft-document-scanner@1.0.2/dist/document-scanner.ui.html).  
+[https://cdn.jsdelivr.net/npm/dynamsoft-document-scanner@1.0.3/dist/document-scanner.ui.html](https://cdn.jsdelivr.net/npm/dynamsoft-document-scanner@1.0.3/dist/document-scanner.ui.html).  
 
 This file defines the UI for `DocumentScannerView`. However, since files on the CDN **cannot be modified directly**, you need to use a **local version** to customize the UI. `cameraEnhancerUIPath` is used to specify the local version.
 
