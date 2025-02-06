@@ -4,35 +4,36 @@ import { NormalizedImageResultItem } from "dynamsoft-capture-vision-bundle";
 import { createControls, shouldCorrectImage } from "./utils";
 import DocumentCorrectionView from "./DocumentCorrectionView";
 import { DDS_ICONS } from "./utils/icons";
-import { ControlButton, DocumentScanResult, EnumResultStatus } from "./utils/types";
+import { DocumentResult, EnumResultStatus, ToolbarButton, ToolbarButtonConfig } from "./utils/types";
 
-export interface ScanResultViewControlIcons {
-  uploadBtn?: Pick<ControlButton, "icon" | "text">;
-  correctImageBtn?: Pick<ControlButton, "icon" | "text">;
-  retakeBtn?: Pick<ControlButton, "icon" | "text">;
-  doneBtn?: Pick<ControlButton, "icon" | "text">;
-  containerStyle?: Partial<CSSStyleDeclaration>;
+export interface DocumentResultViewToolbarButtonsConfig {
+  retake?: ToolbarButtonConfig;
+  correct?: ToolbarButtonConfig;
+  share?: ToolbarButtonConfig;
+  upload?: ToolbarButtonConfig;
+  done?: ToolbarButtonConfig;
 }
 
-export interface ScanResultViewConfig {
+export interface DocumentResultViewConfig {
   container?: HTMLElement;
-  controlIcons?: ScanResultViewControlIcons;
-  onDone?: (result: DocumentScanResult) => Promise<void>;
-  onUpload?: (result: DocumentScanResult) => Promise<void>;
+  toolbarButtonsConfig?: DocumentResultViewToolbarButtonsConfig;
+
+  onDone?: (result: DocumentResult) => Promise<void>;
+  onUpload?: (result: DocumentResult) => Promise<void>;
 }
 
-export default class ScanResultView {
+export default class DocumentResultView {
   private container: HTMLElement;
-  private currentScanResultViewResolver?: (result: DocumentScanResult) => void;
+  private currentScanResultViewResolver?: (result: DocumentResult) => void;
 
   constructor(
     private resources: SharedResources,
-    private config: ScanResultViewConfig,
+    private config: DocumentResultViewConfig,
     private scannerView: DocumentScannerView,
     private correctionView: DocumentCorrectionView
   ) {}
 
-  async launch(): Promise<DocumentScanResult> {
+  async launch(): Promise<DocumentResult> {
     try {
       this.config.container.textContent = "";
       await this.initialize();
@@ -49,16 +50,16 @@ export default class ScanResultView {
     }
   }
 
-  private async handleUploadAndShareBtn() {
+  private async handleUploadAndShareBtn(mode?: "share" | "upload") {
     try {
       const { result } = this.resources;
       if (!result?.correctedImageResult) {
         throw new Error("No image to upload");
       }
 
-      if (this.config?.onUpload) {
+      if (mode === "upload" && this.config?.onUpload) {
         await this.config.onUpload(result);
-      } else {
+      } else if (mode === "share") {
         await this.handleShare();
       }
     } catch (error) {
@@ -141,7 +142,7 @@ export default class ScanResultView {
         this.config.container.style.display = "flex";
       }
     } catch (error) {
-      console.error("ScanResultView - Handle Correction View Error:", error);
+      console.error("DocumentResultView - Handle Correction View Error:", error);
       // Make sure to resolve with error if something goes wrong
       if (this.currentScanResultViewResolver) {
         this.currentScanResultViewResolver({
@@ -235,41 +236,61 @@ export default class ScanResultView {
   }
 
   private createControls(): HTMLElement {
-    const { controlIcons, onUpload } = this.config;
+    const { toolbarButtonsConfig, onUpload } = this.config;
 
     // Check if share is possible
     const testImageBlob = new Blob(["mock-png-data"], { type: "image/png" });
     const testFile = new File([testImageBlob], "test.png", { type: "image/png" });
     const canShare = "share" in navigator && navigator.canShare({ files: [testFile] });
 
-    const buttons: ControlButton[] = [
+    const buttons: ToolbarButton[] = [
       {
-        icon:
-          controlIcons?.uploadBtn?.icon ||
-          (onUpload ? DDS_ICONS.upload : canShare ? DDS_ICONS.share : DDS_ICONS.downloadPNG),
-        text: controlIcons?.uploadBtn?.text || (onUpload ? "Upload" : canShare ? "Share" : "Download"),
-        onClick: () => this.handleUploadAndShareBtn(),
-      },
-      {
-        icon: controlIcons?.correctImageBtn?.icon || DDS_ICONS.normalize,
-        text: controlIcons?.correctImageBtn?.text || "Correction",
-        onClick: () => this.handleCorrectImage(),
-        disabled: !this.correctionView,
-      },
-      {
-        icon: controlIcons?.retakeBtn?.icon || DDS_ICONS.retake,
-        text: controlIcons?.retakeBtn?.text || "Re-take",
+        id: `dds-scanResult-retake`,
+        icon: toolbarButtonsConfig?.retake?.icon || DDS_ICONS.retake,
+        label: toolbarButtonsConfig?.retake?.label || "Re-take",
         onClick: () => this.handleRetake(),
-        disabled: !this.scannerView,
+        className: `${toolbarButtonsConfig?.retake?.className || ""}`,
+        isHidden: toolbarButtonsConfig?.retake?.isHidden || false,
+        isDisabled: !this.scannerView,
       },
       {
-        icon: controlIcons?.doneBtn?.icon || DDS_ICONS.complete,
-        text: controlIcons?.doneBtn?.text || "Done",
+        id: `dds-scanResult-correct`,
+        icon: toolbarButtonsConfig?.correct?.icon || DDS_ICONS.normalize,
+        label: toolbarButtonsConfig?.correct?.label || "Correction",
+        onClick: () => this.handleCorrectImage(),
+        className: `${toolbarButtonsConfig?.correct?.className || ""}`,
+        isHidden: toolbarButtonsConfig?.correct?.isHidden || false,
+        isDisabled: !this.correctionView,
+      },
+      {
+        id: `dds-scanResult-share`,
+        icon: toolbarButtonsConfig?.share?.icon || (canShare ? DDS_ICONS.share : DDS_ICONS.downloadPNG),
+        label: toolbarButtonsConfig?.share?.label || (canShare ? "Share" : "Download"),
+        className: `${toolbarButtonsConfig?.share?.className || ""}`,
+        isHidden: toolbarButtonsConfig?.share?.isHidden || false,
+        onClick: () => this.handleUploadAndShareBtn("share"),
+      },
+      {
+        id: `dds-scanResult-upload`,
+        icon: toolbarButtonsConfig?.upload?.icon || DDS_ICONS.upload,
+        label: toolbarButtonsConfig?.upload?.label || "Upload",
+        className: `${toolbarButtonsConfig?.upload?.className || ""}`,
+        isHidden: !onUpload ? true : toolbarButtonsConfig?.upload?.isHidden || false,
+        isDisabled: !onUpload,
+        onClick: () => this.handleUploadAndShareBtn("upload"),
+      },
+      {
+        id: `dds-scanResult-done`,
+        icon: toolbarButtonsConfig?.done?.icon || DDS_ICONS.complete,
+        label: toolbarButtonsConfig?.done?.label || "Done",
+        className: `${toolbarButtonsConfig?.done?.className || ""}`,
+        isHidden: toolbarButtonsConfig?.done?.isHidden || false,
+        isDisabled: !this.correctionView,
         onClick: () => this.handleDone(),
       },
     ];
 
-    return createControls(buttons, controlIcons?.containerStyle);
+    return createControls(buttons);
   }
 
   async initialize(): Promise<void> {

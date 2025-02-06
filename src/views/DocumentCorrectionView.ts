@@ -5,34 +5,34 @@ import { SharedResources } from "../DocumentScanner";
 import { createControls } from "./utils";
 import { DDS_ICONS } from "./utils/icons";
 import {
-  ControlButton,
+  ToolbarButtonConfig,
   DEFAULT_TEMPLATE_NAMES,
-  DocumentScanResult,
+  DocumentResult,
   EnumResultStatus,
   UtilizedTemplateNames,
+  ToolbarButton,
 } from "./utils/types";
 
 const DEFAULT_CORNER_SIZE = 60;
 
-export interface DocumentCorrectionViewControlIcons {
-  fullImageBtn?: Pick<ControlButton, "icon" | "text">;
-  detectBordersBtn?: Pick<ControlButton, "icon" | "text">;
-  applyBtn?: Pick<ControlButton, "icon" | "text">;
-  containerStyle?: Partial<CSSStyleDeclaration>; // Optional styling
+export interface DocumentCorrectionViewToolbarButtonsConfig {
+  fullImage?: ToolbarButtonConfig;
+  detectBorders?: ToolbarButtonConfig;
+  apply?: ToolbarButtonConfig;
 }
 
 export interface DocumentCorrectionViewConfig {
   container?: HTMLElement;
-  controlIcons?: DocumentCorrectionViewControlIcons;
+  toolbarButtonsConfig?: DocumentCorrectionViewToolbarButtonsConfig;
   templateFilePath?: string;
   utilizedTemplateNames?: UtilizedTemplateNames;
-  onFinish?: (result: DocumentScanResult) => void;
+  onFinish?: (result: DocumentResult) => void;
 }
 
 export default class DocumentCorrectionView {
   private imageEditorView: ImageEditorView = null;
   private layer: DrawingLayer = null;
-  private currentCorrectionResolver?: (result: DocumentScanResult) => void;
+  private currentCorrectionResolver?: (result: DocumentResult) => void;
 
   constructor(private resources: SharedResources, private config: DocumentCorrectionViewConfig) {
     this.config.utilizedTemplateNames = {
@@ -212,27 +212,37 @@ export default class DocumentCorrectionView {
   }
 
   private createControls(): HTMLElement {
-    const { controlIcons } = this.config;
+    const { toolbarButtonsConfig } = this.config;
 
-    const buttons: ControlButton[] = [
+    const buttons: ToolbarButton[] = [
       {
-        icon: controlIcons?.fullImageBtn?.icon || DDS_ICONS.fullImage,
-        text: controlIcons?.fullImageBtn?.text || "Full Image",
+        id: `dds-correction-fullImage`,
+        icon: toolbarButtonsConfig?.fullImage?.icon || DDS_ICONS.fullImage,
+        label: toolbarButtonsConfig?.fullImage?.label || "Full Image",
+        className: `${toolbarButtonsConfig?.fullImage?.className || ""}`,
+        isHidden: toolbarButtonsConfig?.fullImage?.isHidden || false,
         onClick: () => this.setFullImageBoundary(),
       },
       {
-        icon: controlIcons?.detectBordersBtn?.icon || DDS_ICONS.autoBounds,
-        text: controlIcons?.detectBordersBtn?.text || "Detect Borders",
+        id: `dds-correction-detectBorders`,
+        icon: toolbarButtonsConfig?.detectBorders?.icon || DDS_ICONS.autoBounds,
+        label: toolbarButtonsConfig?.detectBorders?.label || "Detect Borders",
+        className: `${toolbarButtonsConfig?.detectBorders?.className || ""}`,
+        isHidden: toolbarButtonsConfig?.detectBorders?.isHidden || false,
         onClick: () => this.setBoundaryAutomatically(),
       },
       {
-        icon: controlIcons?.applyBtn?.icon || DDS_ICONS.finish,
-        text: controlIcons?.applyBtn?.text || "Apply",
+        id: `dds-correction-apply`,
+        icon: toolbarButtonsConfig?.apply?.icon || DDS_ICONS.finish,
+        label: toolbarButtonsConfig?.apply?.label || "Apply",
+        className: `${toolbarButtonsConfig?.apply?.className || ""}`,
+        isHidden: toolbarButtonsConfig?.apply?.isHidden || false,
+
         onClick: () => this.confirmCorrection(),
       },
     ];
 
-    return createControls(buttons, controlIcons?.containerStyle);
+    return createControls(buttons);
   }
 
   private setupCorrectionControls() {
@@ -277,6 +287,7 @@ export default class DocumentCorrectionView {
       newSettings.capturedResultItemTypes |= EnumCapturedResultItemType.CRIT_ORIGINAL_IMAGE;
       await this.resources.cvRouter.updateSettings(this.config.utilizedTemplateNames.detect, newSettings);
     }
+    this.resources.cvRouter.maxImageSideLength = Infinity;
 
     const result = await this.resources.cvRouter.capture(
       this.resources.result.originalImageResult,
@@ -333,7 +344,7 @@ export default class DocumentCorrectionView {
     this.hideView();
   }
 
-  async launch(): Promise<DocumentScanResult> {
+  async launch(): Promise<DocumentResult> {
     try {
       if (!this.resources.result?.correctedImageResult) {
         return {
