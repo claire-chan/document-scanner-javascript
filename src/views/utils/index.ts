@@ -2,7 +2,9 @@ import { EnumFlowType, ToolbarButton } from "./types";
 
 export function getElement(element: string | HTMLElement): HTMLElement | null {
   if (typeof element === "string") {
-    return document.querySelector(element);
+    const el = document.querySelector(element) as HTMLElement;
+    if (!el) throw new Error("Element not found");
+    return el;
   }
   return element instanceof HTMLElement ? element : null;
 }
@@ -144,3 +146,7 @@ export function createStyle(id: string, style: string) {
 export function isSVGString(str: string): boolean {
   return str.trim().startsWith("<svg") && str.trim().endsWith("</svg>");
 }
+
+export const isEmptyObject = (obj: object | null | undefined): boolean => {
+  return !obj || Object.keys(obj).length === 0;
+};

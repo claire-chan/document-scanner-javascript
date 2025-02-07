@@ -2,7 +2,7 @@ import { EnumCapturedResultItemType, Point, Quadrilateral } from "dynamsoft-core
 import { DrawingLayer, DrawingStyleManager, ImageEditorView, QuadDrawingItem } from "dynamsoft-camera-enhancer";
 import { DetectedQuadResultItem, NormalizedImageResultItem } from "dynamsoft-document-normalizer";
 import { SharedResources } from "../DocumentScanner";
-import { createControls } from "./utils";
+import { createControls, getElement } from "./utils";
 import { DDS_ICONS } from "./utils/icons";
 import {
   ToolbarButtonConfig,
@@ -22,11 +22,13 @@ export interface DocumentCorrectionViewToolbarButtonsConfig {
 }
 
 export interface DocumentCorrectionViewConfig {
-  container?: HTMLElement;
+  container?: HTMLElement | string;
   toolbarButtonsConfig?: DocumentCorrectionViewToolbarButtonsConfig;
   templateFilePath?: string;
   utilizedTemplateNames?: UtilizedTemplateNames;
   onFinish?: (result: DocumentResult) => void;
+
+  _showResultView?: boolean; // Internal use, to change Apply -> Done if result view is not configured
 }
 
 export default class DocumentCorrectionView {
@@ -70,7 +72,7 @@ export default class DocumentCorrectionView {
     });
 
     correctionViewWrapper.appendChild(imageEditorViewElement);
-    this.config.container.appendChild(correctionViewWrapper);
+    getElement(this.config.container).appendChild(correctionViewWrapper);
 
     this.imageEditorView = await ImageEditorView.createInstance(imageEditorViewElement);
     this.layer = this.imageEditorView.createDrawingLayer();
@@ -233,8 +235,10 @@ export default class DocumentCorrectionView {
       },
       {
         id: `dds-correction-apply`,
-        icon: toolbarButtonsConfig?.apply?.icon || DDS_ICONS.finish,
-        label: toolbarButtonsConfig?.apply?.label || "Apply",
+        icon:
+          toolbarButtonsConfig?.apply?.icon ||
+          (this.config?._showResultView === false ? DDS_ICONS.complete : DDS_ICONS.finish),
+        label: toolbarButtonsConfig?.apply?.label || (this.config?._showResultView === false ? "Done" : "Apply"),
         className: `${toolbarButtonsConfig?.apply?.className || ""}`,
         isHidden: toolbarButtonsConfig?.apply?.isHidden || false,
 
@@ -248,7 +252,7 @@ export default class DocumentCorrectionView {
   private setupCorrectionControls() {
     try {
       const controlContainer = this.createControls();
-      const wrapper = this.config.container.firstElementChild as HTMLElement;
+      const wrapper = getElement(this.config.container).firstElementChild as HTMLElement;
       if (wrapper) {
         wrapper.appendChild(controlContainer);
       }
@@ -355,9 +359,9 @@ export default class DocumentCorrectionView {
         };
       }
 
-      this.config.container.textContent = "";
+      getElement(this.config.container).textContent = "";
       await this.initialize();
-      this.config.container.style.display = "flex";
+      getElement(this.config.container).style.display = "flex";
 
       // Return promise that resolves when user clicks finish
       return new Promise((resolve) => {
@@ -378,7 +382,7 @@ export default class DocumentCorrectionView {
   }
 
   hideView(): void {
-    this.config.container.style.display = "none";
+    getElement(this.config.container).style.display = "none";
   }
 
   /**
@@ -418,7 +422,7 @@ export default class DocumentCorrectionView {
 
     // Clean up the container
     if (this.config?.container) {
-      this.config.container.textContent = "";
+      getElement(this.config.container).textContent = "";
     }
 
     // Clear resolver
