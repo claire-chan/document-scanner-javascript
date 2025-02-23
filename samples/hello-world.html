@@ -17,6 +17,8 @@
       // Initialize the Dynamsoft Document Scanner
       const documentScanner = new Dynamsoft.DocumentScanner({
         license: "YOUR_LICENSE_KEY_HERE",
+        templateFilePath: "../dist/ddn.json",
+        utilizedTemplateNames: "Default",
       });
       (async () => {
         // Launch the scanner and wait for the result
