@@ -79,7 +79,7 @@
             "QuadrilateralDetectionModes": [
                 {
                     "Mode": "QDM_GENERAL",
-                    "MinQuadrilateralAreaRatio": 0
+                    "MinQuadrilateralAreaRatio": 50
                 }
             ]
         },
@@ -125,6 +125,41 @@
                     "BlockSizeY": 25,
                     "EnableFillBinaryVacancy": 0,
                     "ThresholdCompensation": 5
+                },
+                {
+                    "BinarizationThreshold": -1,
+                    "BlockSizeX": 5,
+                    "BlockSizeY": 5,
+                    "EnableFillBinaryVacancy": 0,
+                    "GrayscaleEnhancementModesIndex": -1,
+                    "Mode": "BM_LOCAL_BLOCK",
+                    "MorphOperation": "Close",
+                    "MorphOperationKernelSizeX": 3,
+                    "MorphOperationKernelSizeY": 3,
+                    "MorphShape": "Rectangle",
+                    "ThresholdCompensation": 4
+                },
+                {
+                "BinarizationThreshold": -1,
+                "BlockSizeX": 7,
+                "BlockSizeY": 7,
+                "EnableFillBinaryVacancy": 0,
+                "GrayscaleEnhancementModesIndex": -1,
+                "Mode": "BM_LOCAL_BLOCK",
+                "MorphOperation": "Close",
+                "MorphOperationKernelSizeX": 3,
+                "MorphOperationKernelSizeY": 3,
+                "MorphShape": "Rectangle",
+                "ThresholdCompensation": 4
+                }
+            ],
+            "GrayscaleEnhancementModes": [
+                {
+                    "Mode": "GEM_SHARPEN_SMOOTH",
+                    "SharpenBlockSizeX": 3,
+                    "SharpenBlockSizeY": 3,
+                    "SmoothBlockSizeX": 3,
+                    "SmoothBlockSizeY": 3
                 }
             ],
             "TextDetectionMode": {
