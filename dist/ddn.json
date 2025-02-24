@@ -75,12 +75,6 @@
                     "Section": "ST_DOCUMENT_NORMALIZATION",
                     "ImageParameterName": "ip-detect"
                 }
-            ],
-            "QuadrilateralDetectionModes": [
-                {
-                    "Mode": "QDM_GENERAL",
-                    "MinQuadrilateralAreaRatio": 60
-                }
             ]
         },
         {
