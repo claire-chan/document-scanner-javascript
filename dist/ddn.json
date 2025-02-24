@@ -79,7 +79,7 @@
             "QuadrilateralDetectionModes": [
                 {
                     "Mode": "QDM_GENERAL",
-                    "MinQuadrilateralAreaRatio": 60
+                    "MinQuadrilateralAreaRatio": 50
                 }
             ]
         },
