@@ -105,7 +105,7 @@
     "ImageParameterOptions": [
         {
             "Name": "ip-detect-and-normalize",
-
+            "ScaleDownThreshold": 512,
             "ColourConversionModes": [
                 {
                     "Mode": "CICM_GENERAL"
