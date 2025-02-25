@@ -17,7 +17,8 @@
       // Initialize the Dynamsoft Document Scanner
       const documentScanner = new Dynamsoft.DocumentScanner({
         license: "t0068dAAAAAVTN+JzDDaxZ7W8KxrL0tJtMW/FUesJViMGnW1AYGWIRt9/aKzxR+5zQXCheFLReEvJer8A7EySVtb4dujNU0M=",
-        templateFilePath: "../dist/ddn.json",
+        //templateFilePath: "../dist/ddn.json",
+        templateFilePath: "https://claire-chan.github.io/document-scanner-javascript/dist/ddn.json",
         utilizedTemplateNames: {detect: "DetectDocumentBoundaries_Default2", normalize: "NormalizeDocument_Default2"}
       });
       (async () => {
