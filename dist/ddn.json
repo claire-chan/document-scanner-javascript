@@ -4,19 +4,22 @@
 			"Name": "DetectDocumentBoundaries_Default2",
 			"ImageROIProcessingNameArray": [
 				"roi-detect-document-boundaries"
-			]
+			],
+			"OutputOriginalImage": 1
 		},
 		{
 			"Name": "DetectAndNormalizeDocument_Default2",
 			"ImageROIProcessingNameArray": [
 				"roi-detect-and-normalize-document"
-			]
+			],
+			"OutputOriginalImage": 1
 		},
 		{
 			"Name": "NormalizeDocument_Default2",
 			"ImageROIProcessingNameArray": [
 				"roi-normalize-document"
-			]
+			],
+			"OutputOriginalImage": 1
 		}
 	],
 	"TargetROIDefOptions": [
