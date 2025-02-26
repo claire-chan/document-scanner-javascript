@@ -58,6 +58,12 @@
 					"Section": "ST_DOCUMENT_NORMALIZATION",
 					"ImageParameterName": "ip-detect-and-normalize"
 				}
+			],
+			"QuadrilateralDetectionModes": [
+				{
+					"Mode": "QDM_GENERAL",
+					"MinQuadrilateralAreaRatio": 50
+				}
 			]
 		},
 		{
@@ -78,6 +84,12 @@
 					"Section": "ST_DOCUMENT_NORMALIZATION",
 					"ImageParameterName": "ip-detect"
 				}
+			],
+			"QuadrilateralDetectionModes": [
+				{
+					"Mode": "QDM_GENERAL",
+					"MinQuadrilateralAreaRatio": 50
+				}
 			]
 		},
 		{
@@ -96,12 +108,19 @@
 					"Section": "ST_DOCUMENT_NORMALIZATION",
 					"ImageParameterName": "ip-normalize"
 				}
+			],
+			"QuadrilateralDetectionModes": [
+				{
+					"Mode": "QDM_GENERAL",
+					"MinQuadrilateralAreaRatio": 50
+				}
 			]
 		}
 	],
 	"ImageParameterOptions": [
-		{
+	{
       "Name": "ip-detect-and-normalize",
+	  "ScaleDownThreshold": 512,
       "ColourConversionModes": [
         {
           "Mode": "CICM_GENERAL"
